@@ -1,0 +1,116 @@
+{
+  "datasetA": {
+    "dataset": "BRFSS2015 Diabetes Health Indicators (multi-class)",
+    "n_features_used": 15,
+    "top_features": {
+      "BMI": 0.2064,
+      "Age": 0.1224,
+      "Income": 0.097,
+      "PhysHlth": 0.0899,
+      "Education": 0.0749,
+      "MentHlth": 0.0738,
+      "GenHlth": 0.0633,
+      "HighBP": 0.0419,
+      "Fruits": 0.0289,
+      "Smoker": 0.0278
+    },
+    "train_size": 45000,
+    "test_size": 45957,
+    "base_model_results": {
+      "ANN": {
+        "accuracy": 0.7812,
+        "precision": 0.4296,
+        "sensitivity": 0.4771,
+        "specificity": 0.8024,
+        "f_score": 0.4452,
+        "mcc": 0.351,
+        "roc_auc": 0.762
+      },
+      "LSTM_substitute(RF)": {
+        "accuracy": 0.7873,
+        "precision": 0.4302,
+        "sensitivity": 0.471,
+        "specificity": 0.7967,
+        "f_score": 0.445,
+        "mcc": 0.3446,
+        "roc_auc": 0.748
+      },
+      "CNN_substitute(HGB)": {
+        "accuracy": 0.778,
+        "precision": 0.4435,
+        "sensitivity": 0.4753,
+        "specificity": 0.8009,
+        "f_score": 0.4436,
+        "mcc": 0.3452,
+        "roc_auc": 0.75
+      }
+    },
+    "stack_ANN_result": {
+      "accuracy": 0.7817,
+      "precision": 0.4504,
+      "sensitivity": 0.4693,
+      "specificity": 0.7943,
+      "f_score": 0.4441,
+      "mcc": 0.3352,
+      "roc_auc": 0.7524
+    },
+    "elapsed_seconds": 85.6
+  },
+  "datasetB": {
+    "dataset": "Diabetic Patient Readmission (binary: <30 days)",
+    "n_features_used": 20,
+    "top_features": {
+      "num_lab_procedures": 0.0746,
+      "diag_2": 0.0742,
+      "diag_3": 0.0736,
+      "num_medications": 0.0732,
+      "diag_1": 0.0728,
+      "time_in_hospital": 0.0591,
+      "age": 0.0566,
+      "number_inpatient": 0.0563,
+      "discharge_disposition_id": 0.047,
+      "num_procedures": 0.0461
+    },
+    "train_size": 45000,
+    "test_size": 20354,
+    "base_model_results": {
+      "ANN": {
+        "accuracy": 0.8844,
+        "precision": 0.3822,
+        "sensitivity": 0.0586,
+        "specificity": 0.5233,
+        "f_score": 0.1016,
+        "mcc": 0.1134,
+        "roc_auc": 0.6232
+      },
+      "LSTM_substitute(RF)": {
+        "accuracy": 0.8851,
+        "precision": 0.3988,
+        "sensitivity": 0.059,
+        "specificity": 0.5239,
+        "f_score": 0.1028,
+        "mcc": 0.1182,
+        "roc_auc": 0.6751
+      },
+      "CNN_substitute(HGB)": {
+        "accuracy": 0.8738,
+        "precision": 0.3322,
+        "sensitivity": 0.1295,
+        "specificity": 0.5484,
+        "f_score": 0.1863,
+        "mcc": 0.1494,
+        "roc_auc": 0.6794
+      }
+    },
+    "stack_ANN_result": {
+      "accuracy": 0.8489,
+      "precision": 0.2433,
+      "sensitivity": 0.1678,
+      "specificity": 0.5511,
+      "f_score": 0.1986,
+      "mcc": 0.1208,
+      "roc_auc": 0.6599
+    },
+    "elapsed_seconds": 65.2
+  }
+}

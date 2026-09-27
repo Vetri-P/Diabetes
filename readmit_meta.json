@@ -1,0 +1,339 @@
+{
+  "dataset_key": "readmit",
+  "class_names": [
+    "Not Readmitted <30d",
+    "Readmitted <30d"
+  ],
+  "labels": [
+    0,
+    1
+  ],
+  "binary": true,
+  "selected_features": [
+    "number_inpatient",
+    "number_diagnoses",
+    "time_in_hospital",
+    "discharge_disposition_id",
+    "num_medications",
+    "diag_1",
+    "age",
+    "diag_2",
+    "number_emergency",
+    "diag_3",
+    "num_lab_procedures",
+    "num_procedures",
+    "admission_type_id",
+    "admission_source_id",
+    "race",
+    "insulin",
+    "gender",
+    "number_outpatient",
+    "A1Cresult",
+    "metformin"
+  ],
+  "all_feature_columns": [
+    "race",
+    "gender",
+    "age",
+    "admission_type_id",
+    "discharge_disposition_id",
+    "admission_source_id",
+    "time_in_hospital",
+    "num_lab_procedures",
+    "num_procedures",
+    "num_medications",
+    "number_outpatient",
+    "number_emergency",
+    "number_inpatient",
+    "diag_1",
+    "diag_2",
+    "diag_3",
+    "number_diagnoses",
+    "max_glu_serum",
+    "A1Cresult",
+    "metformin",
+    "repaglinide",
+    "nateglinide",
+    "chlorpropamide",
+    "glimepiride",
+    "acetohexamide",
+    "glipizide",
+    "glyburide",
+    "tolbutamide",
+    "pioglitazone",
+    "rosiglitazone",
+    "acarbose",
+    "miglitol",
+    "troglitazone",
+    "tolazamide",
+    "examide",
+    "citoglipton",
+    "insulin",
+    "glyburide-metformin",
+    "glipizide-metformin",
+    "glimepiride-pioglitazone",
+    "metformin-rosiglitazone",
+    "metformin-pioglitazone",
+    "change",
+    "diabetesMed"
+  ],
+  "feature_importances": {
+    "number_inpatient": 0.1895,
+    "number_diagnoses": 0.055,
+    "time_in_hospital": 0.0539,
+    "discharge_disposition_id": 0.0538,
+    "num_medications": 0.0465,
+    "diag_1": 0.0412,
+    "age": 0.0396,
+    "diag_2": 0.0381,
+    "number_emergency": 0.0381,
+    "diag_3": 0.0372,
+    "num_lab_procedures": 0.0364,
+    "num_procedures": 0.0359,
+    "admission_type_id": 0.0319,
+    "admission_source_id": 0.0302,
+    "race": 0.0278,
+    "insulin": 0.0268,
+    "gender": 0.0239,
+    "number_outpatient": 0.0234,
+    "A1Cresult": 0.0211,
+    "metformin": 0.0172,
+    "glipizide": 0.0169,
+    "max_glu_serum": 0.0162,
+    "glyburide": 0.0146,
+    "change": 0.0143,
+    "pioglitazone": 0.0142,
+    "diabetesMed": 0.0128,
+    "rosiglitazone": 0.0113,
+    "repaglinide": 0.0101,
+    "glimepiride": 0.0092,
+    "acarbose": 0.0036,
+    "glyburide-metformin": 0.0036,
+    "nateglinide": 0.002,
+    "tolbutamide": 0.0015,
+    "tolazamide": 0.0011,
+    "miglitol": 0.0009,
+    "chlorpropamide": 0.0005,
+    "troglitazone": 0.0,
+    "acetohexamide": 0.0,
+    "citoglipton": 0.0,
+    "examide": 0.0,
+    "glimepiride-pioglitazone": 0.0,
+    "glipizide-metformin": 0.0,
+    "metformin-pioglitazone": 0.0,
+    "metformin-rosiglitazone": 0.0
+  },
+  "base_model_results": {
+    "ANN": {
+      "accuracy": 0.8809,
+      "precision": 0.3316,
+      "sensitivity": 0.076,
+      "specificity": 0.5285,
+      "f_score": 0.1237,
+      "mcc": 0.1137,
+      "roc_auc": 0.6422
+    },
+    "LSTM": {
+      "accuracy": 0.8895,
+      "precision": 0.0,
+      "sensitivity": 0.0,
+      "specificity": 0.5,
+      "f_score": 0.0,
+      "mcc": 0.0,
+      "roc_auc": 0.6023
+    },
+    "CNN": {
+      "accuracy": 0.8895,
+      "precision": 0.0,
+      "sensitivity": 0.0,
+      "specificity": 0.5,
+      "f_score": 0.0,
+      "mcc": 0.0,
+      "roc_auc": 0.6146
+    }
+  },
+  "stack_ANN_result": {
+    "accuracy": 0.8853,
+    "precision": 0.364,
+    "sensitivity": 0.0501,
+    "specificity": 0.5196,
+    "f_score": 0.088,
+    "mcc": 0.1004,
+    "roc_auc": 0.643
+  },
+  "stack_LSTM_result": {
+    "accuracy": 0.8854,
+    "precision": 0.3555,
+    "sensitivity": 0.0452,
+    "specificity": 0.5175,
+    "f_score": 0.0803,
+    "mcc": 0.0933,
+    "roc_auc": 0.642
+  },
+  "stack_CNN_result": {
+    "accuracy": 0.8783,
+    "precision": 0.3157,
+    "sensitivity": 0.0862,
+    "specificity": 0.5315,
+    "f_score": 0.1355,
+    "mcc": 0.1155,
+    "roc_auc": 0.6425
+  },
+  "stack_consensus_result": {
+    "accuracy": 0.8829,
+    "precision": 0.3398,
+    "sensitivity": 0.0633,
+    "specificity": 0.524,
+    "f_score": 0.1068,
+    "mcc": 0.106,
+    "roc_auc": 0.6432
+  },
+  "feature_ranges": {
+    "number_inpatient": [
+      0.0,
+      21.0,
+      0.0
+    ],
+    "number_diagnoses": [
+      1.0,
+      16.0,
+      8.0
+    ],
+    "time_in_hospital": [
+      1.0,
+      14.0,
+      4.0
+    ],
+    "discharge_disposition_id": [
+      1.0,
+      28.0,
+      1.0
+    ],
+    "num_medications": [
+      1.0,
+      81.0,
+      15.0
+    ],
+    "diag_1": [
+      0.0,
+      716.0,
+      298.0
+    ],
+    "age": [
+      0.0,
+      9.0,
+      6.0
+    ],
+    "diag_2": [
+      0.0,
+      748.0,
+      260.0
+    ],
+    "number_emergency": [
+      0.0,
+      76.0,
+      0.0
+    ],
+    "diag_3": [
+      0.0,
+      789.0,
+      256.0
+    ],
+    "num_lab_procedures": [
+      1.0,
+      132.0,
+      44.0
+    ],
+    "num_procedures": [
+      0.0,
+      6.0,
+      1.0
+    ],
+    "admission_type_id": [
+      1.0,
+      8.0,
+      1.0
+    ],
+    "admission_source_id": [
+      1.0,
+      25.0,
+      7.0
+    ],
+    "race": [
+      0.0,
+      5.0,
+      2.0
+    ],
+    "insulin": [
+      0.0,
+      3.0,
+      1.0
+    ],
+    "gender": [
+      0.0,
+      2.0,
+      0.0
+    ],
+    "number_outpatient": [
+      0.0,
+      42.0,
+      0.0
+    ],
+    "A1Cresult": [
+      0.0,
+      3.0,
+      3.0
+    ],
+    "metformin": [
+      0.0,
+      3.0,
+      1.0
+    ]
+  },
+  "all_feature_medians": {
+    "race": 2.0,
+    "gender": 0.0,
+    "age": 6.0,
+    "admission_type_id": 1.0,
+    "discharge_disposition_id": 1.0,
+    "admission_source_id": 7.0,
+    "time_in_hospital": 4.0,
+    "num_lab_procedures": 44.0,
+    "num_procedures": 1.0,
+    "num_medications": 15.0,
+    "number_outpatient": 0.0,
+    "number_emergency": 0.0,
+    "number_inpatient": 0.0,
+    "diag_1": 298.0,
+    "diag_2": 260.0,
+    "diag_3": 256.0,
+    "number_diagnoses": 8.0,
+    "max_glu_serum": 3.0,
+    "A1Cresult": 3.0,
+    "metformin": 1.0,
+    "repaglinide": 1.0,
+    "nateglinide": 1.0,
+    "chlorpropamide": 1.0,
+    "glimepiride": 1.0,
+    "acetohexamide": 0.0,
+    "glipizide": 1.0,
+    "glyburide": 1.0,
+    "tolbutamide": 0.0,
+    "pioglitazone": 1.0,
+    "rosiglitazone": 1.0,
+    "acarbose": 1.0,
+    "miglitol": 1.0,
+    "troglitazone": 0.0,
+    "tolazamide": 0.0,
+    "examide": 0.0,
+    "citoglipton": 0.0,
+    "insulin": 1.0,
+    "glyburide-metformin": 1.0,
+    "glipizide-metformin": 0.0,
+    "glimepiride-pioglitazone": 0.0,
+    "metformin-rosiglitazone": 0.0,
+    "metformin-pioglitazone": 0.0,
+    "change": 1.0,
+    "diabetesMed": 1.0
+  }
+}

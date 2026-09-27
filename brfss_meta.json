@@ -1,0 +1,242 @@
+{
+  "dataset_key": "brfss",
+  "class_names": [
+    "No Diabetes",
+    "Prediabetes",
+    "Diabetes"
+  ],
+  "labels": [
+    0,
+    1,
+    2
+  ],
+  "binary": false,
+  "selected_features": [
+    "HighBP",
+    "GenHlth",
+    "HighChol",
+    "DiffWalk",
+    "BMI",
+    "Age",
+    "Income",
+    "PhysHlth",
+    "HeartDiseaseorAttack",
+    "Education",
+    "MentHlth",
+    "PhysActivity",
+    "Sex",
+    "Fruits",
+    "Smoker"
+  ],
+  "all_feature_columns": [
+    "HighBP",
+    "HighChol",
+    "CholCheck",
+    "BMI",
+    "Smoker",
+    "Stroke",
+    "HeartDiseaseorAttack",
+    "PhysActivity",
+    "Fruits",
+    "Veggies",
+    "HvyAlcoholConsump",
+    "AnyHealthcare",
+    "NoDocbcCost",
+    "GenHlth",
+    "MentHlth",
+    "PhysHlth",
+    "DiffWalk",
+    "Sex",
+    "Age",
+    "Education",
+    "Income"
+  ],
+  "feature_importances": {
+    "HighBP": 0.1675,
+    "GenHlth": 0.1376,
+    "HighChol": 0.0919,
+    "DiffWalk": 0.079,
+    "BMI": 0.0762,
+    "Age": 0.0599,
+    "Income": 0.0469,
+    "PhysHlth": 0.0455,
+    "HeartDiseaseorAttack": 0.0384,
+    "Education": 0.0383,
+    "MentHlth": 0.0294,
+    "PhysActivity": 0.0256,
+    "Sex": 0.0237,
+    "Fruits": 0.0225,
+    "Smoker": 0.0215,
+    "Veggies": 0.021,
+    "NoDocbcCost": 0.0182,
+    "Stroke": 0.018,
+    "HvyAlcoholConsump": 0.0157,
+    "AnyHealthcare": 0.0124,
+    "CholCheck": 0.0107
+  },
+  "base_model_results": {
+    "ANN": {
+      "accuracy": 0.7543,
+      "precision": 0.4236,
+      "sensitivity": 0.4859,
+      "specificity": 0.8104,
+      "f_score": 0.4371,
+      "mcc": 0.3496,
+      "roc_auc": 0.751
+    },
+    "LSTM": {
+      "accuracy": 0.7592,
+      "precision": 0.4137,
+      "sensitivity": 0.4585,
+      "specificity": 0.784,
+      "f_score": 0.427,
+      "mcc": 0.3,
+      "roc_auc": 0.7273
+    },
+    "CNN": {
+      "accuracy": 0.7554,
+      "precision": 0.4202,
+      "sensitivity": 0.477,
+      "specificity": 0.8023,
+      "f_score": 0.4338,
+      "mcc": 0.3339,
+      "roc_auc": 0.7513
+    }
+  },
+  "stack_ANN_result": {
+    "accuracy": 0.7645,
+    "precision": 0.4258,
+    "sensitivity": 0.4835,
+    "specificity": 0.8082,
+    "f_score": 0.4407,
+    "mcc": 0.3511,
+    "roc_auc": 0.7563
+  },
+  "stack_LSTM_result": {
+    "accuracy": 0.7585,
+    "precision": 0.424,
+    "sensitivity": 0.4838,
+    "specificity": 0.8083,
+    "f_score": 0.4382,
+    "mcc": 0.348,
+    "roc_auc": 0.7534
+  },
+  "stack_CNN_result": {
+    "accuracy": 0.7627,
+    "precision": 0.4254,
+    "sensitivity": 0.4842,
+    "specificity": 0.8092,
+    "f_score": 0.4401,
+    "mcc": 0.3516,
+    "roc_auc": 0.7518
+  },
+  "stack_consensus_result": {
+    "accuracy": 0.7618,
+    "precision": 0.4252,
+    "sensitivity": 0.4842,
+    "specificity": 0.8089,
+    "f_score": 0.4397,
+    "mcc": 0.3509,
+    "roc_auc": 0.7545
+  },
+  "feature_ranges": {
+    "HighBP": [
+      0.0,
+      1.0,
+      0.0
+    ],
+    "GenHlth": [
+      1.0,
+      5.0,
+      3.0
+    ],
+    "HighChol": [
+      0.0,
+      1.0,
+      0.0
+    ],
+    "DiffWalk": [
+      0.0,
+      1.0,
+      0.0
+    ],
+    "BMI": [
+      12.0,
+      98.0,
+      27.0
+    ],
+    "Age": [
+      1.0,
+      13.0,
+      8.0
+    ],
+    "Income": [
+      1.0,
+      8.0,
+      6.0
+    ],
+    "PhysHlth": [
+      0.0,
+      30.0,
+      0.0
+    ],
+    "HeartDiseaseorAttack": [
+      0.0,
+      1.0,
+      0.0
+    ],
+    "Education": [
+      1.0,
+      6.0,
+      5.0
+    ],
+    "MentHlth": [
+      0.0,
+      30.0,
+      0.0
+    ],
+    "PhysActivity": [
+      0.0,
+      1.0,
+      1.0
+    ],
+    "Sex": [
+      0.0,
+      1.0,
+      0.0
+    ],
+    "Fruits": [
+      0.0,
+      1.0,
+      1.0
+    ],
+    "Smoker": [
+      0.0,
+      1.0,
+      0.0
+    ]
+  },
+  "all_feature_medians": {
+    "HighBP": 0.0,
+    "HighChol": 0.0,
+    "CholCheck": 1.0,
+    "BMI": 27.0,
+    "Smoker": 0.0,
+    "Stroke": 0.0,
+    "HeartDiseaseorAttack": 0.0,
+    "PhysActivity": 1.0,
+    "Fruits": 1.0,
+    "Veggies": 1.0,
+    "HvyAlcoholConsump": 0.0,
+    "AnyHealthcare": 1.0,
+    "NoDocbcCost": 0.0,
+    "GenHlth": 3.0,
+    "MentHlth": 0.0,
+    "PhysHlth": 0.0,
+    "DiffWalk": 0.0,
+    "Sex": 0.0,
+    "Age": 8.0,
+    "Education": 5.0,
+    "Income": 6.0
+  }
+}
