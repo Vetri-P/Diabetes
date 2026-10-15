@@ -16,6 +16,14 @@ import plotly.express as px
 import plotly.graph_objects as go
 import tensorflow as tf
 
+def safe_dataframe(df, **kwargs):
+    """Safely render dataframe; falls back to st.table if pyarrow encounters an environment issue."""
+    try:
+        st.dataframe(df, **kwargs)
+    except Exception:
+        st.table(df)
+
+
 # Configure Streamlit page
 st.set_page_config(
     page_title="Diabetes EDL Clinical Decision Support System",
@@ -627,7 +635,7 @@ with tab_predict:
                 comp_rows.append(row)
 
             comp_df = pd.DataFrame(comp_rows)
-            st.dataframe(comp_df, use_container_width=True, hide_index=True)
+            safe_dataframe(comp_df, use_container_width=True, hide_index=True)
 
             # Interactive Plotly Radar / Bar agreement visualization
             fig = go.Figure()
@@ -703,7 +711,7 @@ with tab_performance:
         if col in styled_df.columns:
             styled_df[col] = styled_df[col].apply(lambda x: f"{x:.4f}" if pd.notnull(x) else "N/A")
 
-    st.dataframe(styled_df, use_container_width=True, hide_index=True)
+    safe_dataframe(styled_df, use_container_width=True, hide_index=True)
 
     # Multi-metric visual chart
     col_chart1, col_chart2 = st.columns(2)
@@ -915,7 +923,7 @@ with tab_batch:
     if uploaded_file is not None:
         batch_raw = pd.read_csv(uploaded_file)
         st.write(f"Loaded **{len(batch_raw)} patient records**.")
-        st.dataframe(batch_raw.head(4), use_container_width=True)
+        safe_dataframe(batch_raw.head(4), use_container_width=True)
 
         if st.button("⚡ Execute Batch EDL Inferences", type="primary"):
             with st.spinner("Executing EDL inference across patient cohort..."):
@@ -939,7 +947,7 @@ with tab_batch:
 
                 batch_res_df = pd.DataFrame(results_list)
                 st.success(f"Successfully processed {len(batch_res_df)} patients!")
-                st.dataframe(batch_res_df, use_container_width=True)
+                safe_dataframe(batch_res_df, use_container_width=True)
 
                 res_csv = batch_res_df.to_csv(index=False).encode('utf-8')
                 st.download_button(
