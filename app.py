@@ -540,184 +540,37 @@ with tab_predict:
     st.caption("Enter patient vital signs, clinical laboratory biomarkers, and diagnostic history for real-time risk stratification.")
     
     # ----------------------------------------------------------------------------------
-    # 📷 Smart Lab Report Scanner (Vision AI & Digital Report Ingestion)
+    # 📷 Smart Lab Report Scanner (Simple, Clean, Zero Typing Error Ingestion)
     # ----------------------------------------------------------------------------------
-    with st.expander("📷 Scan / Upload Lab Test Report (Vision AI Auto-Extraction — Zero Typing Errors)", expanded=True):
-        st.markdown("""
-        Upload a laboratory test report image, take a photo with your mobile/laptop camera, or test with pre-configured hospital diagnostic reports to **auto-populate patient clinical attributes without manual typing errors**.
-        """)
+    with st.expander("📷 Scan / Upload Lab Test Report Image (Auto-Fill to Avoid Typing Errors)", expanded=False):
+        st.caption("Upload a lab report photo or snap with your camera to automatically extract Glucose, HbA1c, Blood Pressure, and Demographics.")
         
-        tab_samples, tab_upload, tab_camera = st.tabs([
-            "🧪 Pre-Loaded Hospital Samples (1-Click Test)",
-            "📁 Upload Image / PDF",
-            "📸 Live Camera Capture"
-        ])
+        scan_mode = st.radio("Input Source", ["📁 Upload Image", "📸 Camera Snap"], horizontal=True)
+        img_bytes = None
+        mime_type = "image/jpeg"
         
-        with tab_samples:
-            st.markdown("##### 🏥 Test the Scanner Instantly with Real Diagnostic Center Reports:")
-            samp_col1, samp_col2, samp_col3 = st.columns(3)
-            with samp_col1:
-                st.markdown("""
-                <div class="clinical-card">
-                    <div style="font-weight:700; color:#38bdf8;">🏥 Apollo Diagnostics</div>
-                    <div style="font-size:12px; color:#cbd5e1; margin-top:4px;">
-                        • Patient: Rajesh K. (58y, Male)<br>
-                        • Fasting Glucose: <b>168 mg/dL</b> <span class="clinical-indicator ind-red">High</span><br>
-                        • HbA1c: <b>8.4%</b> <span class="clinical-indicator ind-red">Diabetic</span><br>
-                        • Blood Pressure: <b>142/90 mmHg</b><br>
-                        • Total Cholesterol: <b>238 mg/dL</b><br>
-                        • BMI: <b>31.8 kg/m²</b> (Obese)
-                    </div>
-                </div>
-                """, unsafe_allow_html=True)
-                if st.button("📥 Load Apollo Report", key="btn_load_apollo", use_container_width=True):
-                    st.session_state["scanned_report_data"] = {
-                        "glucose": 168.0,
-                        "hba1c": 8.4,
-                        "sbp": 142,
-                        "dbp": 90,
-                        "cholesterol": 238,
-                        "age": 58,
-                        "sex": "Male",
-                        "bmi": 31.8,
-                        "height_cm": 170.0,
-                        "weight_kg": 92.0,
-                        "confidence_notes": "Apollo Diagnostics Diabetic Profile: Glycemia ≥126, HbA1c ≥6.5%."
-                    }
-                    st.rerun()
-
-            with samp_col2:
-                st.markdown("""
-                <div class="clinical-card">
-                    <div style="font-weight:700; color:#fbbf24;">🏥 Dr. Lal PathLabs</div>
-                    <div style="font-size:12px; color:#cbd5e1; margin-top:4px;">
-                        • Patient: Sunita M. (46y, Female)<br>
-                        • Fasting Glucose: <b>114 mg/dL</b> <span class="clinical-indicator ind-yellow">IFG</span><br>
-                        • HbA1c: <b>6.1%</b> <span class="clinical-indicator ind-yellow">Pre-Diabetic</span><br>
-                        • Blood Pressure: <b>130/84 mmHg</b><br>
-                        • Total Cholesterol: <b>212 mg/dL</b><br>
-                        • BMI: <b>28.2 kg/m²</b> (Overweight)
-                    </div>
-                </div>
-                """, unsafe_allow_html=True)
-                if st.button("📥 Load Lal PathLabs Report", key="btn_load_lal", use_container_width=True):
-                    st.session_state["scanned_report_data"] = {
-                        "glucose": 114.0,
-                        "hba1c": 6.1,
-                        "sbp": 130,
-                        "dbp": 84,
-                        "cholesterol": 212,
-                        "age": 46,
-                        "sex": "Female",
-                        "bmi": 28.2,
-                        "height_cm": 162.0,
-                        "weight_kg": 74.0,
-                        "confidence_notes": "Dr. Lal PathLabs Metabolic Panel: Impaired Fasting Glucose, Borderline Lipids."
-                    }
-                    st.rerun()
-
-            with samp_col3:
-                st.markdown("""
-                <div class="clinical-card">
-                    <div style="font-weight:700; color:#34d399;">🏥 Thyrocare Diagnostics</div>
-                    <div style="font-size:12px; color:#cbd5e1; margin-top:4px;">
-                        • Patient: Ananya R. (29y, Female)<br>
-                        • Fasting Glucose: <b>86 mg/dL</b> <span class="clinical-indicator ind-green">Normal</span><br>
-                        • HbA1c: <b>5.2%</b> <span class="clinical-indicator ind-green">Optimal</span><br>
-                        • Blood Pressure: <b>118/76 mmHg</b><br>
-                        • Total Cholesterol: <b>172 mg/dL</b><br>
-                        • BMI: <b>20.7 kg/m²</b> (Normal)
-                    </div>
-                </div>
-                """, unsafe_allow_html=True)
-                if st.button("📥 Load Thyrocare Report", key="btn_load_thyro", use_container_width=True):
-                    st.session_state["scanned_report_data"] = {
-                        "glucose": 86.0,
-                        "hba1c": 5.2,
-                        "sbp": 118,
-                        "dbp": 76,
-                        "cholesterol": 172,
-                        "age": 29,
-                        "sex": "Female",
-                        "bmi": 20.7,
-                        "height_cm": 166.0,
-                        "weight_kg": 57.0,
-                        "confidence_notes": "Thyrocare Health Screening: Optimal Glycemic & Lipid Vitals."
-                    }
-                    st.rerun()
-
-        with tab_upload:
-            uploaded_file = st.file_uploader(
-                "Upload Lab Report Image (PNG, JPG, JPEG)",
-                type=["png", "jpg", "jpeg"],
-                key="uploader_lab_report"
-            )
+        if scan_mode == "📁 Upload Image":
+            uploaded_file = st.file_uploader("Select Lab Report (PNG, JPG, JPEG)", type=["png", "jpg", "jpeg"], key="clean_uploader")
             if uploaded_file:
-                st.image(uploaded_file, caption="Uploaded Medical Report", width=380)
-                if st.button("🔍 Extract Metrics from Uploaded Report", key="btn_scan_upload"):
-                    with st.spinner("🤖 Vision AI analyzing medical laboratory report..."):
-                        img_bytes = uploaded_file.getvalue()
-                        m_type = uploaded_file.type or "image/jpeg"
-                        data, err = extract_lab_report_data(img_bytes, m_type, api_key=gemini_api_key)
-                        if data:
-                            st.session_state["scanned_report_data"] = data
-                            st.success(f"✅ Extracted successfully: {data.get('confidence_notes', 'All key biomarkers detected')}")
-                            st.rerun()
-                        else:
-                            st.error(f"Vision AI note: {err}")
-                            st.info("💡 You can also test without an API key using the 'Pre-Loaded Hospital Samples' tab above.")
-
-        with tab_camera:
-            camera_file = st.camera_input("Take a photo of the patient's physical lab report")
-            if camera_file:
-                st.image(camera_file, caption="Captured Image", width=380)
-                if st.button("🔍 Extract Metrics from Camera Capture", key="btn_scan_camera"):
-                    with st.spinner("🤖 Vision AI analyzing captured photo..."):
-                        img_bytes = camera_file.getvalue()
-                        data, err = extract_lab_report_data(img_bytes, "image/jpeg", api_key=gemini_api_key)
-                        if data:
-                            st.session_state["scanned_report_data"] = data
-                            st.success(f"✅ Extracted successfully: {data.get('confidence_notes', 'All key biomarkers detected')}")
-                            st.rerun()
-                        else:
-                            st.error(f"Vision AI note: {err}")
-
-        # Display Extracted Data Confirmation Box
-        scanned = st.session_state.get("scanned_report_data")
-        if scanned:
-            st.markdown("---")
-            st.markdown("#### 📋 Extracted Report Verification Card")
-            sc_c1, sc_c2, sc_c3, sc_c4 = st.columns(4)
-            with sc_c1:
-                st.metric("Fasting Glucose", f"{scanned.get('glucose', 'N/A')} mg/dL")
-                st.metric("HbA1c", f"{scanned.get('hba1c', 'N/A')} %")
-            with sc_c2:
-                sbp_disp = scanned.get('sbp')
-                dbp_disp = scanned.get('dbp')
-                st.metric("Blood Pressure", f"{sbp_disp}/{dbp_disp} mmHg" if sbp_disp and dbp_disp else "N/A")
-                st.metric("Cholesterol", f"{scanned.get('cholesterol', 'N/A')} mg/dL")
-            with sc_c3:
-                st.metric("Patient Age", f"{scanned.get('age', 'N/A')} Years")
-                st.metric("Biological Sex", f"{scanned.get('sex', 'N/A')}")
-            with sc_c4:
-                bmi_disp = scanned.get('bmi')
-                ht_disp = scanned.get('height_cm')
-                wt_disp = scanned.get('weight_kg')
-                st.metric("BMI", f"{bmi_disp} kg/m²" if bmi_disp else (f"{wt_disp}kg / {ht_disp}cm" if wt_disp and ht_disp else "N/A"))
-                st.caption(f"Notes: {scanned.get('confidence_notes', 'Verified')}")
-
-            btn_apply_col1, btn_apply_col2 = st.columns([1, 1])
-            with btn_apply_col1:
-                if st.button("✅ Auto-Fill Patient Profile from Extracted Report", type="primary", use_container_width=True):
-                    st.session_state["scanned_applied"] = scanned
-                    st.session_state["applied_report_notice"] = "✅ Successfully imported lab metrics into clinical consultation form! Zero typing error verified."
-                    st.rerun()
-            with btn_apply_col2:
-                if st.button("🗑️ Clear Scanned Data", use_container_width=True):
-                    del st.session_state["scanned_report_data"]
-                    if "scanned_applied" in st.session_state:
-                        del st.session_state["scanned_applied"]
-                    st.rerun()
+                img_bytes = uploaded_file.getvalue()
+                mime_type = uploaded_file.type or "image/jpeg"
+                st.image(uploaded_file, caption="Report Preview", width=320)
+        else:
+            cam_file = st.camera_input("Take photo of report")
+            if cam_file:
+                img_bytes = cam_file.getvalue()
+                st.image(cam_file, caption="Captured Photo", width=320)
+                
+        if img_bytes:
+            if st.button("🔍 Extract & Auto-Fill Form", type="primary", use_container_width=True):
+                with st.spinner("Analyzing lab report..."):
+                    data, err = extract_lab_report_data(img_bytes, mime_type, api_key=gemini_api_key)
+                    if data:
+                        st.session_state["scanned_applied"] = data
+                        st.session_state["applied_report_notice"] = f"✅ Extracted: Glucose: {data.get('glucose')} mg/dL | HbA1c: {data.get('hba1c')}% | BP: {data.get('sbp')}/{data.get('dbp')} mmHg"
+                        st.rerun()
+                    else:
+                        st.error(f"Extraction error: {err}")
 
     if "applied_report_notice" in st.session_state:
         st.success(st.session_state.pop("applied_report_notice"))
