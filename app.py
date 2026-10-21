@@ -17,11 +17,18 @@ import plotly.graph_objects as go
 import tensorflow as tf
 
 def safe_dataframe(df, **kwargs):
-    """Safely render dataframe; falls back to st.table if pyarrow encounters an environment issue."""
+    """Safely render dataframe with fallbacks for PyArrow and Streamlit width deprecations."""
+    params = kwargs.copy()
+    if "use_container_width" in params:
+        val = params.pop("use_container_width")
+        params["width"] = "stretch" if val else "content"
     try:
-        st.dataframe(df, **kwargs)
+        st.dataframe(df, **params)
     except Exception:
-        st.table(df)
+        try:
+            st.dataframe(df, **kwargs)
+        except Exception:
+            st.table(df)
 
 
 # Configure Streamlit page
@@ -867,7 +874,7 @@ with tab_flowchart:
     st.markdown("#### 🔍 Architectural Specifications")
     spec_col1, spec_col2 = st.columns(2)
     with spec_col1:
-        st.markdown("""
+        st.markdown(r"""
         **Tier 1: Base Learner Configurations**
         - **ANN Architecture**: `Input(d) -> Dense(64, ReLU) -> Dense(32, ReLU) -> Dropout(0.2) -> Output(Softmax/Sigmoid)`
         - **LSTM Architecture**: `Input(d, 1) -> LSTM(32, ReLU) -> Dense(16, ReLU) -> Dropout(0.2) -> Output`
@@ -875,7 +882,7 @@ with tab_flowchart:
         - **Optimizer**: Adam ($\eta = 0.001$), Loss: Categorical Cross-Entropy / Binary Cross-Entropy
         """)
     with spec_col2:
-        st.markdown("""
+        st.markdown(r"""
         **Tier 2: Meta Stacking Configurations**
         - **Input Vector**: $\mathbf{x}_{\text{meta}} = [P_{\text{ANN}}, P_{\text{LSTM}}, P_{\text{CNN}}] \in \mathbb{R}^{3 \times C}$
         - **Stack-ANN**: `Input(meta_d) -> Dense(32, ReLU) -> Dropout(0.2) -> Output`
