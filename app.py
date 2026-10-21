@@ -577,12 +577,12 @@ with tab_predict:
     
     # Preset quick-fills matching authentic hospital patient profiles
     p_preset = st.selectbox(
-        "⚡ Quick-Fill Patient Profile Preset:",
+        "⚡ Quick Patient Presets:",
         [
-            "Custom Patient Profile (Manual Entry)",
-            "Preset 1: Healthy Patient (Normal Lab Vitals & Glycemia)",
-            "Preset 2: Pre-Diabetic Patient (Borderline / Impaired Fasting Glucose)",
-            "Preset 3: High-Risk Diabetic Patient (Chronic / Confirmed Type 2 Markers)"
+            "Custom Patient",
+            "Preset 1: Healthy Patient (Low Risk)",
+            "Preset 2: Pre-Diabetic (Moderate Risk)",
+            "Preset 3: High-Risk Diabetic"
         ]
     )
     
@@ -700,17 +700,17 @@ with tab_predict:
         c1, c2, c3 = st.columns(3)
 
         with c1:
-            st.markdown("##### 🏥 Physical Examination & Vitals")
-            patient_age = st.number_input("Patient Age (Years)", min_value=18, max_value=100, value=int(def_age), step=1)
+            st.markdown("##### 🏥 Vitals & Physical Exam")
+            patient_age = st.number_input("Age (Years)", min_value=18, max_value=100, value=int(def_age), step=1)
             age_bracket = map_years_to_brfss_age(patient_age)
             age_labels = {
                 1: "18–24", 2: "25–29", 3: "30–34", 4: "35–39", 5: "40–44", 6: "45–49",
                 7: "50–54", 8: "55–59", 9: "60–64", 10: "65–69", 11: "70–74", 12: "75–79", 13: "80+"
             }
-            st.caption(f"Stratified Age Strata: **{age_labels[age_bracket]}**")
+            st.caption(f"Age Group: **{age_labels[age_bracket]}**")
             input_dict["Age"] = age_bracket
 
-            sex_sel = st.radio("Biological Sex", ["Female", "Male"], index=0 if def_sex == "Female" else 1, horizontal=True)
+            sex_sel = st.radio("Sex", ["Female", "Male"], index=0 if def_sex == "Female" else 1, horizontal=True)
             input_dict["Sex"] = 1 if sex_sel == "Male" else 0
 
             ht_col, wt_col = st.columns(2)
@@ -730,10 +730,10 @@ with tab_predict:
                 bmi_badge = '<span class="clinical-indicator ind-red">Obese (≥30.0)</span>'
             st.markdown(f"**BMI**: `{calculated_bmi} kg/m²` &nbsp; {bmi_badge}", unsafe_allow_html=True)
 
-            st.markdown("<div style='margin-top:12px;'><b>Resting Blood Pressure (mmHg)</b></div>", unsafe_allow_html=True)
+            st.markdown("<div style='margin-top:10px;'><b>Blood Pressure (mmHg)</b></div>", unsafe_allow_html=True)
             sbp_col, dbp_col = st.columns(2)
-            sbp = sbp_col.number_input("Systolic (SBP)", 80, 230, int(def_sbp), step=2)
-            dbp = dbp_col.number_input("Diastolic (DBP)", 50, 140, int(def_dbp), step=2)
+            sbp = sbp_col.number_input("Systolic", 80, 230, int(def_sbp), step=2)
+            dbp = dbp_col.number_input("Diastolic", 50, 140, int(def_dbp), step=2)
             
             is_hypertensive = (sbp >= 130 or dbp >= 80)
             input_dict["HighBP"] = 1 if is_hypertensive else 0
@@ -745,50 +745,50 @@ with tab_predict:
                 bp_badge = '<span class="clinical-indicator ind-red">Stage 1 HTN (130–139/80–89)</span>'
             else:
                 bp_badge = '<span class="clinical-indicator ind-red">Stage 2 HTN (≥140 or ≥90)</span>'
-            st.markdown(f"BP Assessment: {bp_badge}", unsafe_allow_html=True)
+            st.markdown(f"Blood Pressure: {bp_badge}", unsafe_allow_html=True)
 
         with c2:
-            st.markdown("##### 🧪 Clinical Laboratory Biomarkers")
+            st.markdown("##### 🧪 Laboratory Biomarkers")
             
             fbg_val = st.number_input(
-                "Fasting Blood Glucose - FBS (mg/dL)",
+                "Fasting Blood Sugar (mg/dL)",
                 min_value=50.0, max_value=450.0, value=float(def_fbg), step=1.0,
-                help="Standard clinical diagnostic metric. Normal: <100 mg/dL, Pre-diabetes: 100-125 mg/dL, Diabetes: ≥126 mg/dL"
+                help="Standard clinical glycemic metric. Normal: <100 mg/dL, Pre-diabetes: 100-125 mg/dL, Diabetes: ≥126 mg/dL"
             )
             if fbg_val < 100:
                 fbg_badge = '<span class="clinical-indicator ind-green">Normal (<100 mg/dL)</span>'
             elif fbg_val <= 125:
-                fbg_badge = '<span class="clinical-indicator ind-yellow">Pre-Diabetic IFG (100–125)</span>'
+                fbg_badge = '<span class="clinical-indicator ind-yellow">Pre-Diabetes (100–125)</span>'
             else:
                 fbg_badge = '<span class="clinical-indicator ind-red">Diabetic Threshold (≥126 mg/dL)</span>'
-            st.markdown(f"ADA Glucose Criteria: {fbg_badge}", unsafe_allow_html=True)
+            st.markdown(f"Status: {fbg_badge}", unsafe_allow_html=True)
 
             hba1c_val = st.number_input(
-                "HbA1c Glycated Hemoglobin (%)",
+                "HbA1c Level (%)",
                 min_value=4.0, max_value=16.0, value=float(def_hba1c), step=0.1,
-                help="Hospital gold standard for 3-month glycemic control. Normal: <5.7%, Pre-diabetic: 5.7-6.4%, Diabetic: ≥6.5%"
+                help="Hospital gold standard for 3-month glycemic control. Normal: <5.7%, Pre-diabetes: 5.7-6.4%, Diabetes: ≥6.5%"
             )
             if hba1c_val < 5.7:
                 a1c_badge = '<span class="clinical-indicator ind-green">Normal (<5.7%)</span>'
             elif hba1c_val <= 6.4:
-                a1c_badge = '<span class="clinical-indicator ind-yellow">Pre-Diabetes Range (5.7–6.4%)</span>'
+                a1c_badge = '<span class="clinical-indicator ind-yellow">Pre-Diabetes (5.7–6.4%)</span>'
             else:
                 a1c_badge = '<span class="clinical-indicator ind-red">Diabetes Diagnostic (≥6.5%)</span>'
-            st.markdown(f"ADA HbA1c Criteria: {a1c_badge}", unsafe_allow_html=True)
+            st.markdown(f"Status: {a1c_badge}", unsafe_allow_html=True)
 
             chol_val = st.number_input(
-                "Total Serum Cholesterol (mg/dL)",
+                "Total Cholesterol (mg/dL)",
                 min_value=100, max_value=500, value=int(def_chol), step=5,
-                help="Hospital lipid profile. Desirable: <200 mg/dL, Borderline/High: ≥200 mg/dL"
+                help="Hospital lipid profile. Normal: <200 mg/dL, Elevated: ≥200 mg/dL"
             )
             has_high_chol = (chol_val >= 200)
             input_dict["HighChol"] = 1 if has_high_chol else 0
             input_dict["CholCheck"] = 1
             if chol_val < 200:
-                chol_badge = '<span class="clinical-indicator ind-green">Desirable (<200 mg/dL)</span>'
+                chol_badge = '<span class="clinical-indicator ind-green">Normal (<200 mg/dL)</span>'
             else:
-                chol_badge = '<span class="clinical-indicator ind-red">High Cholesterol (≥200 mg/dL)</span>'
-            st.markdown(f"Lipid Assessment: {chol_badge}", unsafe_allow_html=True)
+                chol_badge = '<span class="clinical-indicator ind-red">High (≥200 mg/dL)</span>'
+            st.markdown(f"Status: {chol_badge}", unsafe_allow_html=True)
 
             st.session_state["patient_fbg"] = fbg_val
             st.session_state["patient_hba1c"] = hba1c_val
@@ -796,17 +796,17 @@ with tab_predict:
             st.session_state["patient_bp"] = f"{sbp}/{dbp} mmHg"
 
         with c3:
-            st.markdown("##### 📋 Clinical History, Symptoms & Lifestyle")
+            st.markdown("##### 📋 Medical History & Lifestyle")
             
             symptoms_sel = st.radio(
-                "Classic Symptoms (Frequent Urination, Excessive Thirst, Fatigue)?",
-                ["No Significant Symptoms", "Present / Noticeable Symptoms"],
+                "Frequent Urination, Extreme Thirst, or Fatigue?",
+                ["No", "Yes"],
                 index=def_sym,
                 horizontal=True
             )
             
             cvd_sel = st.radio(
-                "History of Coronary Heart Disease / Heart Attack?",
+                "History of Heart Disease?",
                 ["No", "Yes"],
                 index=def_cvd,
                 horizontal=True
@@ -822,7 +822,7 @@ with tab_predict:
             input_dict["Stroke"] = 1 if stroke_sel == "Yes" else 0
 
             diff_walk = st.radio(
-                "Physical Mobility Limitation / Difficulty Walking?",
+                "Difficulty Walking or Climbing Stairs?",
                 ["No", "Yes"],
                 index=def_walk,
                 horizontal=True
@@ -830,20 +830,20 @@ with tab_predict:
             input_dict["DiffWalk"] = 1 if diff_walk == "Yes" else 0
 
             act_sel = st.radio(
-                "Physical Activity (≥150 min Exercise / Week)?",
-                ["Sedentary / Inactive", "Regularly Active"],
+                "Regular Physical Activity?",
+                ["Inactive", "Active"],
                 index=def_act,
                 horizontal=True
             )
             input_dict["PhysActivity"] = 1 if "Active" in act_sel else 0
 
             smoke_sel = st.radio(
-                "Tobacco Smoking History?",
-                ["Non-Smoker", "Smoker / Prior Smoker"],
+                "Smoking History?",
+                ["No", "Yes"],
                 index=def_smoke,
                 horizontal=True
             )
-            input_dict["Smoker"] = 1 if "Smoker" in smoke_sel else 0
+            input_dict["Smoker"] = 1 if "Yes" in smoke_sel else 0
 
             if (fbg_val >= 126 or hba1c_val >= 6.5 or def_gen >= 4):
                 auto_gen = 4 if fbg_val < 180 else 5
@@ -854,20 +854,20 @@ with tab_predict:
 
             gen_labels = {1: "1 - Excellent", 2: "2 - Very Good", 3: "3 - Good", 4: "4 - Fair", 5: "5 - Poor"}
             gen_sel = st.selectbox(
-                "General Clinical Health Rating",
+                "Overall Health Status",
                 list(gen_labels.keys()),
                 index=auto_gen - 1,
                 format_func=lambda k: gen_labels[k],
-                help="Automatically calibrated from lab biomarkers (FBS, HbA1c, BP) or clinician adjusted."
+                help="Calibrated automatically from lab biomarkers or adjusted by clinician."
             )
             input_dict["GenHlth"] = gen_sel
             
-            input_dict["PhysHlth"] = 10 if "Present" in symptoms_sel else (2 if auto_gen >= 3 else 0)
+            input_dict["PhysHlth"] = 10 if "Yes" in symptoms_sel else (2 if auto_gen >= 3 else 0)
             input_dict["MentHlth"] = 2 if auto_gen >= 4 else 0
 
         # Collapsible Demographic & Population baseline covariates
-        with st.expander("⚙️ Additional Demographic & Population Baseline Covariates (Optional / Auto-filled)", expanded=False):
-            st.caption("The underlying multi-tier EDL model integrates demographic covariates. These are pre-populated with clinical population medians.")
+        with st.expander("⚙️ Additional Demographic Factors (Optional)", expanded=False):
+            st.caption("Standard population baseline covariates (pre-filled with median values).")
             ec1, ec2, ec3 = st.columns(3)
             with ec1:
                 income_labels = {
@@ -934,7 +934,7 @@ with tab_predict:
             input_dict["admission_source_id"] = st.number_input("Admission Source Code", 1, 25, 7)
 
     st.markdown("<br>", unsafe_allow_html=True)
-    predict_btn = st.button("🚀 Run EDL Ensemble Stacking Prediction", type="primary", use_container_width=True)
+    predict_btn = st.button("🚀 Run Risk Prediction", type="primary", use_container_width=True)
 
     if predict_btn:
         active_engine = "Consensus Ensemble" if meta_engine_choice.startswith("Consensus") else meta_engine_choice
@@ -946,12 +946,12 @@ with tab_predict:
         confidence_pct = chosen_proba[pred_idx] * 100.0
 
         st.markdown("---")
-        st.subheader("🎯 Diagnostic Evaluation & Stacking Inference Results")
+        st.subheader("🎯 Risk Prediction Results")
 
         res_col1, res_col2 = st.columns([1.1, 1.9])
 
         with res_col1:
-            st.markdown(f"#### 🏆 {active_engine} Decision")
+            st.markdown(f"#### 🏆 Ensemble Prediction")
             
             # Risk coloring
             if pred_idx == 0:
@@ -976,14 +976,14 @@ with tab_predict:
             """, unsafe_allow_html=True)
 
             st.markdown("<br>", unsafe_allow_html=True)
-            st.markdown("##### Tier-2 Probability Distribution:")
+            st.markdown("##### Prediction Probabilities:")
             for i, c_name in enumerate(class_names):
                 pct = float(chosen_proba[i])
                 st.write(f"**{c_name}**: `{pct*100:.1f}%`")
                 st.progress(pct)
 
         with res_col2:
-            st.markdown("#### 🔬 Base-Level Learners vs. Meta-Level Stacking")
+            st.markdown("#### 🔬 Ensemble Model Comparison")
             
             # Construct comparison table
             comp_rows = []
@@ -1031,14 +1031,14 @@ with tab_predict:
             bmi_in = input_dict.get("BMI", 25.0)
 
             st.markdown("---")
-            st.markdown("#### 🏥 Clinical Laboratory Biomarkers & Vitals Concordance")
+            st.markdown("#### 🏥 Laboratory Biomarkers Summary")
             lc1, lc2, lc3, lc4 = st.columns(4)
             with lc1:
-                st.metric("Fasting Blood Glucose", f"{fbg_in:.0f} mg/dL", 
-                          "Normal (<100)" if fbg_in < 100 else ("Pre-Diabetic" if fbg_in <= 125 else "Diabetic Range (≥126)"))
+                st.metric("Fasting Blood Sugar", f"{fbg_in:.0f} mg/dL", 
+                          "Normal (<100)" if fbg_in < 100 else ("Pre-Diabetes" if fbg_in <= 125 else "Diabetic (≥126)"))
             with lc2:
                 st.metric("HbA1c Level", f"{a1c_in:.1f}%", 
-                          "Normal (<5.7%)" if a1c_in < 5.7 else ("Pre-Diabetic" if a1c_in <= 6.4 else "Diabetic Range (≥6.5%)"))
+                          "Normal (<5.7%)" if a1c_in < 5.7 else ("Pre-Diabetes" if a1c_in <= 6.4 else "Diabetic (≥6.5%)"))
             with lc3:
                 st.metric("Blood Pressure", bp_in, 
                           "Hypertensive" if input_dict.get("HighBP", 0) == 1 else "Normal (<120/80)")
@@ -1046,25 +1046,25 @@ with tab_predict:
                 st.metric("Body Mass Index", f"{bmi_in} kg/m²", 
                           "Obese (≥30)" if bmi_in >= 30 else ("Overweight" if bmi_in >= 25 else "Normal"))
 
-        # Clinical Recommendation Action Plan
+        # Clinical Recommendations
         st.markdown("---")
-        st.markdown("#### 📋 Personalized Clinical Decision Guidance")
+        st.markdown("#### 📋 Clinical Recommendations")
         if dataset_key == "brfss":
             c_rec1, c_rec2, c_rec3 = st.columns(3)
             with c_rec1:
-                st.info(f"**Glycemic Monitoring**: {'Routine annual check recommended.' if pred_idx == 0 else 'Priority fasting blood glucose and HbA1c screening indicated.'}")
+                st.info(f"**Glycemic Care**: {'Routine annual checkup recommended.' if pred_idx == 0 else 'Priority fasting blood glucose and HbA1c screening recommended.'}")
             with c_rec2:
                 bmi = input_dict.get("BMI", 25)
-                st.warning(f"**Lifestyle Intervention**: {'Maintain balanced diet & activity.' if bmi < 25 else 'Weight reduction target: 5–10% body mass via caloric control.'}")
+                st.warning(f"**Lifestyle Guidance**: {'Maintain balanced diet and regular activity.' if bmi < 25 else 'Target 5–10% weight reduction through balanced diet and exercise.'}")
             with c_rec3:
                 bp = input_dict.get("HighBP", 0)
-                st.error(f"**Cardiovascular Comorbidity**: {'Normal BP range.' if bp == 0 else 'Active hypertension management required to prevent microvascular damage.'}")
+                st.error(f"**Cardiovascular Health**: {'Blood pressure is within normal range.' if bp == 0 else 'Active blood pressure management recommended to prevent complications.'}")
         else:
             r1, r2 = st.columns(2)
             with r1:
-                st.info(f"**Discharge Coordination**: {'Standard outpatient care instructions.' if pred_idx == 0 else 'High readmission risk detected: assign dedicated nurse navigator and 7-day post-discharge follow-up.'}")
+                st.info(f"**Discharge Plan**: {'Standard outpatient care instructions.' if pred_idx == 0 else 'High readmission risk detected: assign dedicated follow-up within 7 days.'}")
             with r2:
-                st.warning("**Medication Reconciliation**: Verify insulin regimen, oral hypoglycemics, and nephropathy lab panels before release.")
+                st.warning("**Medications**: Review insulin regimen, oral hypoglycemics, and kidney function panels.")
 
 # ======================================================================================
 # TAB 2: Model Performance & Comparative Benchmark
