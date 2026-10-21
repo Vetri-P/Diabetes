@@ -50,39 +50,85 @@ st.markdown("""
         font-family: 'Outfit', 'Inter', sans-serif;
     }
     
-    /* Header hero styling */
-    .hero-banner {
-        background: linear-gradient(135deg, rgba(16, 24, 40, 0.95) 0%, rgba(26, 38, 64, 0.9) 50%, rgba(13, 27, 42, 0.95) 100%);
-        border: 1px solid rgba(0, 210, 190, 0.25);
-        border-radius: 16px;
-        padding: 26px 32px;
-        margin-bottom: 24px;
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
-        backdrop-filter: blur(12px);
-    }
-    .hero-title {
-        color: #ffffff;
-        font-size: 28px;
-        font-weight: 800;
-        letter-spacing: -0.5px;
-        margin: 0 0 6px 0;
+    /* Header hero styling - clean, compact, hospital-grade */
+    .hero-banner-clean {
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(20, 35, 60, 0.9) 60%, rgba(13, 27, 42, 0.95) 100%);
+        border: 1px solid rgba(0, 210, 190, 0.35);
+        border-radius: 14px;
+        padding: 18px 24px;
+        margin-bottom: 18px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
         display: flex;
         align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
         gap: 12px;
     }
-    .hero-subtitle {
-        color: #00d2be;
-        font-size: 14px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 1.2px;
-        margin-bottom: 8px;
-    }
-    .hero-desc {
-        color: #94a3b8;
-        font-size: 14px;
+    .hero-title-clean {
+        color: #ffffff;
+        font-size: 24px;
+        font-weight: 800;
+        letter-spacing: -0.4px;
         margin: 0;
-        line-height: 1.5;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .hero-subtitle-clean {
+        color: #00d2be;
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        margin-top: 3px;
+    }
+    .badge-pill {
+        background: rgba(0, 210, 190, 0.12);
+        border: 1px solid rgba(0, 210, 190, 0.4);
+        color: #00d2be;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+    .badge-hospital {
+        background: rgba(59, 130, 246, 0.15);
+        border: 1px solid rgba(59, 130, 246, 0.45);
+        color: #60a5fa;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+    .clinical-card {
+        background: rgba(19, 30, 49, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 12px;
+    }
+    .clinical-indicator {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 700;
+        margin-top: 4px;
+    }
+    .ind-green {
+        background: rgba(16, 185, 129, 0.15);
+        border: 1px solid #10b981;
+        color: #34d399;
+    }
+    .ind-yellow {
+        background: rgba(245, 158, 11, 0.15);
+        border: 1px solid #f59e0b;
+        color: #fbbf24;
+    }
+    .ind-red {
+        background: rgba(239, 68, 68, 0.15);
+        border: 1px solid #ef4444;
+        color: #f87171;
     }
 
     /* Pipeline Step Cards */
@@ -332,61 +378,67 @@ scaler, meta, base_models, meta_models, encoders = load_edl_system(dataset_key)
 class_names = meta["class_names"]
 
 # --------------------------------------------------------------------------------------
-# Hero Banner & Proposed System Visual Pipeline
+# Hero Banner & Proposed System Visual Pipeline (Clean, Compact, Hospital-Grade)
 # --------------------------------------------------------------------------------------
 st.markdown(f"""
-<div class="hero-banner">
-    <div class="hero-subtitle">Ensemble Deep Learning (EDL) Clinical Decision Support System</div>
-    <div class="hero-title">
-        🩺 {dataset_option}
+<div class="hero-banner-clean">
+    <div>
+        <div class="hero-title-clean">
+            <span>🩺</span>
+            <span>Diabetes Clinical Decision Support System</span>
+        </div>
+        <div class="hero-subtitle-clean">
+            🏥 Hospital Clinical Diagnostic Suite • Multi-Tier Ensemble Deep Learning (EDL)
+        </div>
     </div>
-    <p class="hero-desc">
-        Faithful implementation of the multi-tier EDL framework from <b>Al Reshan et al. (IEEE Access, 2024)</b>:
-        integrating tabular ANN, sequential LSTM, and structural CNN base learners into meta-level stacking models.
-    </p>
+    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <span class="badge-pill">⚡ Active: {dataset_option.split('—')[0].strip()}</span>
+        <span class="badge-hospital">🛡️ ADA Clinical Guidelines Aligned</span>
+    </div>
 </div>
 """, unsafe_allow_html=True)
 
-# Visual Pipeline Cards (Exact replica of user's diagram)
-st.markdown("""
-<div class="pipe-container">
-    <div class="pipe-step">
-        <div class="pipe-num">1</div>
-        <div class="pipe-title">Diabetes Dataset</div>
-        <div class="pipe-sub">BRFSS 2015 / Readmit</div>
+# Preprocessing & Pipeline architecture overview (neatly collapsed by default to prevent visual clutter)
+with st.expander("ℹ️ View 7-Stage EDL Deep Learning Architecture & Preprocessing Pipeline", expanded=False):
+    st.markdown("""
+    <div class="pipe-container">
+        <div class="pipe-step">
+            <div class="pipe-num">1</div>
+            <div class="pipe-title">Clinical Dataset</div>
+            <div class="pipe-sub">Patient Lab & Vitals</div>
+        </div>
+        <div class="pipe-step">
+            <div class="pipe-num">2</div>
+            <div class="pipe-title">Preprocessing</div>
+            <div class="pipe-sub">Clean, Impute, MinMax</div>
+        </div>
+        <div class="pipe-step">
+            <div class="pipe-num">3</div>
+            <div class="pipe-title">Feature Selection</div>
+            <div class="pipe-sub">Extra Trees Classifier</div>
+        </div>
+        <div class="pipe-step">
+            <div class="pipe-num">4</div>
+            <div class="pipe-title">80/20 Split</div>
+            <div class="pipe-sub">Stratified Train / Test</div>
+        </div>
+        <div class="pipe-step" style="border-color: rgba(59, 130, 246, 0.4); background: rgba(59, 130, 246, 0.08);">
+            <div class="pipe-num" style="background:#3b82f6; color:#ffffff;">5</div>
+            <div class="pipe-title" style="color:#60a5fa;">DL Base Models</div>
+            <div class="pipe-sub">ANN • LSTM • CNN</div>
+        </div>
+        <div class="pipe-step" style="border-color: rgba(249, 115, 22, 0.4); background: rgba(249, 115, 22, 0.08);">
+            <div class="pipe-num" style="background:#f97316; color:#ffffff;">6</div>
+            <div class="pipe-title" style="color:#fb923c;">Meta Stacking</div>
+            <div class="pipe-sub">Stack-ANN • LSTM • CNN</div>
+        </div>
+        <div class="pipe-step" style="border-color: #00d2be; background: rgba(0, 210, 190, 0.08);">
+            <div class="pipe-num">7</div>
+            <div class="pipe-title" style="color:#00d2be;">Final Prediction</div>
+            <div class="pipe-sub">Clinical Risk Output</div>
+        </div>
     </div>
-    <div class="pipe-step">
-        <div class="pipe-num">2</div>
-        <div class="pipe-title">Preprocessing</div>
-        <div class="pipe-sub">Clean, Impute, MinMax</div>
-    </div>
-    <div class="pipe-step">
-        <div class="pipe-num">3</div>
-        <div class="pipe-title">Feature Selection</div>
-        <div class="pipe-sub">Extra Trees Classifier</div>
-    </div>
-    <div class="pipe-step">
-        <div class="pipe-num">4</div>
-        <div class="pipe-title">80/20 Split</div>
-        <div class="pipe-sub">Stratified Train / Test</div>
-    </div>
-    <div class="pipe-step" style="border-color: rgba(59, 130, 246, 0.4); background: rgba(59, 130, 246, 0.08);">
-        <div class="pipe-num" style="background:#3b82f6; color:#ffffff;">5</div>
-        <div class="pipe-title" style="color:#60a5fa;">DL Base Models</div>
-        <div class="pipe-sub">ANN • LSTM • CNN</div>
-    </div>
-    <div class="pipe-step" style="border-color: rgba(249, 115, 22, 0.4); background: rgba(249, 115, 22, 0.08);">
-        <div class="pipe-num" style="background:#f97316; color:#ffffff;">6</div>
-        <div class="pipe-title" style="color:#fb923c;">Meta Stacking</div>
-        <div class="pipe-sub">Stack-ANN • LSTM • CNN</div>
-    </div>
-    <div class="pipe-step" style="border-color: #00d2be; background: rgba(0, 210, 190, 0.08);">
-        <div class="pipe-num">7</div>
-        <div class="pipe-title" style="color:#00d2be;">Final Prediction</div>
-        <div class="pipe-sub">Clinical Risk Output</div>
-    </div>
-</div>
-""", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
 # --------------------------------------------------------------------------------------
 # Main Application Tabs
@@ -403,132 +455,299 @@ tab_predict, tab_performance, tab_flowchart, tab_batch, tab_about = st.tabs([
 # TAB 1: Real-time Patient Risk Predictor
 # ======================================================================================
 with tab_predict:
-    st.markdown("### 👤 Patient Clinical Profile Entry")
+    st.markdown("### 👤 Patient Clinical Consultation Profile")
+    st.caption("Enter patient vital signs, clinical laboratory biomarkers, and diagnostic history for real-time risk stratification.")
     
-    # Preset quick-fills
+    # Preset quick-fills matching authentic hospital patient profiles
     p_preset = st.selectbox(
-        "⚡ Quick-Fill Patient Preset Profile:",
-        ["Custom Patient", "Preset 1: Healthy Young Adult (Low Risk)", "Preset 2: Pre-Diabetic Indicators (Moderate Risk)", "Preset 3: High Risk Patient (Chronic/Comorbid)"]
+        "⚡ Quick-Fill Patient Profile Preset:",
+        [
+            "Custom Patient Profile (Manual Entry)",
+            "Preset 1: Healthy Patient (Normal Lab Vitals & Glycemia)",
+            "Preset 2: Pre-Diabetic Patient (Borderline / Impaired Fasting Glucose)",
+            "Preset 3: High-Risk Diabetic Patient (Chronic / Confirmed Type 2 Markers)"
+        ]
     )
     
     input_dict = {}
 
-    if dataset_key == "brfss":
-        # BRFSS 2015 3-class Diabetes Risk
-        c1, c2, c3 = st.columns(3)
-        
-        default_bmi = 26.5
-        default_age = 7
-        default_inc = 6
-        default_gen = 2
-        default_phys = 0
-        default_ment = 0
-        default_bp = 0
-        default_chol = 0
-        default_walk = 0
-        default_smoke = 0
+    def map_years_to_brfss_age(age_years):
+        """Maps continuous patient age in years to clinical epidemiologic age strata."""
+        if age_years < 25: return 1
+        elif age_years < 30: return 2
+        elif age_years < 35: return 3
+        elif age_years < 40: return 4
+        elif age_years < 45: return 5
+        elif age_years < 50: return 6
+        elif age_years < 55: return 7
+        elif age_years < 60: return 8
+        elif age_years < 65: return 9
+        elif age_years < 70: return 10
+        elif age_years < 75: return 11
+        elif age_years < 80: return 12
+        else: return 13
 
+    if dataset_key == "brfss":
+        # BRFSS 2015 3-class Diabetes Risk mapped to Hospital Clinical Parameters
         if "Healthy" in p_preset:
-            default_bmi = 22.0
-            default_age = 3
-            default_inc = 7
-            default_gen = 1
-            default_phys = 0
-            default_ment = 0
-            default_bp = 0
-            default_chol = 0
-            default_walk = 0
-            default_smoke = 0
+            def_age = 30
+            def_sex = "Female"
+            def_height = 165.0
+            def_weight = 58.0
+            def_sbp = 115
+            def_dbp = 75
+            def_fbg = 88.0
+            def_hba1c = 5.1
+            def_chol = 170
+            def_cvd = 0
+            def_stroke = 0
+            def_sym = 0
+            def_act = 1
+            def_smoke = 0
+            def_walk = 0
+            def_gen = 1
         elif "Pre-Diabetic" in p_preset:
-            default_bmi = 29.5
-            default_age = 8
-            default_inc = 5
-            default_gen = 3
-            default_phys = 4
-            default_ment = 2
-            default_bp = 1
-            default_chol = 1
-            default_walk = 0
-            default_smoke = 0
-        elif "High Risk" in p_preset:
-            default_bmi = 36.5
-            default_age = 11
-            default_inc = 3
-            default_gen = 5
-            default_phys = 15
-            default_ment = 10
-            default_bp = 1
-            default_chol = 1
-            default_walk = 1
-            default_smoke = 1
+            def_age = 52
+            def_sex = "Male"
+            def_height = 174.0
+            def_weight = 86.0
+            def_sbp = 132
+            def_dbp = 84
+            def_fbg = 114.0
+            def_hba1c = 6.0
+            def_chol = 215
+            def_cvd = 0
+            def_stroke = 0
+            def_sym = 0
+            def_act = 0
+            def_smoke = 0
+            def_walk = 0
+            def_gen = 3
+        elif "High-Risk" in p_preset:
+            def_age = 64
+            def_sex = "Male"
+            def_height = 170.0
+            def_weight = 98.0
+            def_sbp = 148
+            def_dbp = 92
+            def_fbg = 175.0
+            def_hba1c = 8.6
+            def_chol = 245
+            def_cvd = 1
+            def_stroke = 0
+            def_sym = 1
+            def_act = 0
+            def_smoke = 1
+            def_walk = 1
+            def_gen = 5
+        else:
+            def_age = 45
+            def_sex = "Male"
+            def_height = 172.0
+            def_weight = 76.0
+            def_sbp = 124
+            def_dbp = 80
+            def_fbg = 102.0
+            def_hba1c = 5.6
+            def_chol = 195
+            def_cvd = 0
+            def_stroke = 0
+            def_sym = 0
+            def_act = 1
+            def_smoke = 0
+            def_walk = 0
+            def_gen = 2
+
+        c1, c2, c3 = st.columns(3)
 
         with c1:
-            st.markdown("##### 🧬 Vitals & Demographics")
-            bmi_val = st.number_input("BMI (Body Mass Index)", min_value=12.0, max_value=98.0, value=float(default_bmi), step=0.5)
-            input_dict["BMI"] = bmi_val
-            
-            # Dynamic BMI classification indicator
-            if bmi_val < 18.5:
-                st.caption("BMI Status: 🔵 Underweight (< 18.5)")
-            elif bmi_val < 25.0:
-                st.caption("BMI Status: 🟢 Normal weight (18.5 - 24.9)")
-            elif bmi_val < 30.0:
-                st.caption("BMI Status: 🟡 Overweight (25.0 - 29.9)")
-            else:
-                st.caption("BMI Status: 🔴 Obese (≥ 30.0)")
-
+            st.markdown("##### 🏥 Physical Examination & Vitals")
+            patient_age = st.number_input("Patient Age (Years)", min_value=18, max_value=100, value=int(def_age), step=1)
+            age_bracket = map_years_to_brfss_age(patient_age)
             age_labels = {
                 1: "18–24", 2: "25–29", 3: "30–34", 4: "35–39", 5: "40–44", 6: "45–49",
                 7: "50–54", 8: "55–59", 9: "60–64", 10: "65–69", 11: "70–74", 12: "75–79", 13: "80+"
             }
-            age_sel = st.selectbox("Age Group", list(age_labels.keys()), index=default_age - 1, format_func=lambda k: age_labels[k])
-            input_dict["Age"] = age_sel
+            st.caption(f"Stratified Age Strata: **{age_labels[age_bracket]}**")
+            input_dict["Age"] = age_bracket
 
-            sex_sel = st.radio("Sex", ["Female", "Male"], index=1, horizontal=True)
+            sex_sel = st.radio("Biological Sex", ["Female", "Male"], index=0 if def_sex == "Female" else 1, horizontal=True)
             input_dict["Sex"] = 1 if sex_sel == "Male" else 0
 
-            income_labels = {
-                1: "< $10k", 2: "$10–15k", 3: "$15–20k", 4: "$20–25k",
-                5: "$25–35k", 6: "$35–50k", 7: "$50–75k", 8: "$75k+"
-            }
-            income_sel = st.selectbox("Income Bracket", list(income_labels.keys()), index=default_inc - 1, format_func=lambda k: income_labels[k])
-            input_dict["Income"] = income_sel
+            ht_col, wt_col = st.columns(2)
+            height_cm = ht_col.number_input("Height (cm)", 120.0, 220.0, float(def_height), step=1.0)
+            weight_kg = wt_col.number_input("Weight (kg)", 35.0, 200.0, float(def_weight), step=0.5)
+            
+            calculated_bmi = round(weight_kg / ((height_cm / 100) ** 2), 1)
+            input_dict["BMI"] = calculated_bmi
+            
+            if calculated_bmi < 18.5:
+                bmi_badge = '<span class="clinical-indicator ind-yellow">Underweight (<18.5)</span>'
+            elif calculated_bmi < 25.0:
+                bmi_badge = '<span class="clinical-indicator ind-green">Normal Weight (18.5–24.9)</span>'
+            elif calculated_bmi < 30.0:
+                bmi_badge = '<span class="clinical-indicator ind-yellow">Overweight (25.0–29.9)</span>'
+            else:
+                bmi_badge = '<span class="clinical-indicator ind-red">Obese (≥30.0)</span>'
+            st.markdown(f"**BMI**: `{calculated_bmi} kg/m²` &nbsp; {bmi_badge}", unsafe_allow_html=True)
+
+            st.markdown("<div style='margin-top:12px;'><b>Resting Blood Pressure (mmHg)</b></div>", unsafe_allow_html=True)
+            sbp_col, dbp_col = st.columns(2)
+            sbp = sbp_col.number_input("Systolic (SBP)", 80, 230, int(def_sbp), step=2)
+            dbp = dbp_col.number_input("Diastolic (DBP)", 50, 140, int(def_dbp), step=2)
+            
+            is_hypertensive = (sbp >= 130 or dbp >= 80)
+            input_dict["HighBP"] = 1 if is_hypertensive else 0
+            if sbp < 120 and dbp < 80:
+                bp_badge = '<span class="clinical-indicator ind-green">Normal (<120/80)</span>'
+            elif sbp <= 129 and dbp < 80:
+                bp_badge = '<span class="clinical-indicator ind-yellow">Elevated (120–129/<80)</span>'
+            elif sbp <= 139 or dbp <= 89:
+                bp_badge = '<span class="clinical-indicator ind-red">Stage 1 HTN (130–139/80–89)</span>'
+            else:
+                bp_badge = '<span class="clinical-indicator ind-red">Stage 2 HTN (≥140 or ≥90)</span>'
+            st.markdown(f"BP Assessment: {bp_badge}", unsafe_allow_html=True)
 
         with c2:
-            st.markdown("##### 🩺 Health Perception & Vitals")
-            gen_labels = {1: "1 - Excellent", 2: "2 - Very Good", 3: "3 - Good", 4: "4 - Fair", 5: "5 - Poor"}
-            gen_sel = st.selectbox("General Health Rating", list(gen_labels.keys()), index=default_gen - 1, format_func=lambda k: gen_labels[k])
-            input_dict["GenHlth"] = gen_sel
-
-            input_dict["PhysHlth"] = st.slider("Physically Unwell Days (past 30 days)", 0, 30, int(default_phys))
-            input_dict["MentHlth"] = st.slider("Mentally Unwell Days (past 30 days)", 0, 30, int(default_ment))
+            st.markdown("##### 🧪 Clinical Laboratory Biomarkers")
             
-            diff_walk = st.radio("Difficulty Walking or Climbing Stairs?", ["No", "Yes"], index=default_walk, horizontal=True)
-            input_dict["DiffWalk"] = 1 if diff_walk == "Yes" else 0
+            fbg_val = st.number_input(
+                "Fasting Blood Glucose - FBS (mg/dL)",
+                min_value=50.0, max_value=450.0, value=float(def_fbg), step=1.0,
+                help="Standard clinical diagnostic metric. Normal: <100 mg/dL, Pre-diabetes: 100-125 mg/dL, Diabetes: ≥126 mg/dL"
+            )
+            if fbg_val < 100:
+                fbg_badge = '<span class="clinical-indicator ind-green">Normal (<100 mg/dL)</span>'
+            elif fbg_val <= 125:
+                fbg_badge = '<span class="clinical-indicator ind-yellow">Pre-Diabetic IFG (100–125)</span>'
+            else:
+                fbg_badge = '<span class="clinical-indicator ind-red">Diabetic Threshold (≥126 mg/dL)</span>'
+            st.markdown(f"ADA Glucose Criteria: {fbg_badge}", unsafe_allow_html=True)
 
-            edu_labels = {1: "Never attended", 2: "Elementary", 3: "Some high school", 4: "High school graduate", 5: "Some college", 6: "College graduate"}
-            edu_sel = st.selectbox("Education Level", list(edu_labels.keys()), index=4, format_func=lambda k: edu_labels[k])
-            input_dict["Education"] = edu_sel
+            hba1c_val = st.number_input(
+                "HbA1c Glycated Hemoglobin (%)",
+                min_value=4.0, max_value=16.0, value=float(def_hba1c), step=0.1,
+                help="Hospital gold standard for 3-month glycemic control. Normal: <5.7%, Pre-diabetic: 5.7-6.4%, Diabetic: ≥6.5%"
+            )
+            if hba1c_val < 5.7:
+                a1c_badge = '<span class="clinical-indicator ind-green">Normal (<5.7%)</span>'
+            elif hba1c_val <= 6.4:
+                a1c_badge = '<span class="clinical-indicator ind-yellow">Pre-Diabetes Range (5.7–6.4%)</span>'
+            else:
+                a1c_badge = '<span class="clinical-indicator ind-red">Diabetes Diagnostic (≥6.5%)</span>'
+            st.markdown(f"ADA HbA1c Criteria: {a1c_badge}", unsafe_allow_html=True)
+
+            chol_val = st.number_input(
+                "Total Serum Cholesterol (mg/dL)",
+                min_value=100, max_value=500, value=int(def_chol), step=5,
+                help="Hospital lipid profile. Desirable: <200 mg/dL, Borderline/High: ≥200 mg/dL"
+            )
+            has_high_chol = (chol_val >= 200)
+            input_dict["HighChol"] = 1 if has_high_chol else 0
+            input_dict["CholCheck"] = 1
+            if chol_val < 200:
+                chol_badge = '<span class="clinical-indicator ind-green">Desirable (<200 mg/dL)</span>'
+            else:
+                chol_badge = '<span class="clinical-indicator ind-red">High Cholesterol (≥200 mg/dL)</span>'
+            st.markdown(f"Lipid Assessment: {chol_badge}", unsafe_allow_html=True)
+
+            st.session_state["patient_fbg"] = fbg_val
+            st.session_state["patient_hba1c"] = hba1c_val
+            st.session_state["patient_chol"] = chol_val
+            st.session_state["patient_bp"] = f"{sbp}/{dbp} mmHg"
 
         with c3:
-            st.markdown("##### 🥗 Lifestyle & Risk Factors")
-            bp = st.radio("Diagnosed High Blood Pressure?", ["No", "Yes"], index=default_bp, horizontal=True)
-            input_dict["HighBP"] = 1 if bp == "Yes" else 0
+            st.markdown("##### 📋 Clinical History, Symptoms & Lifestyle")
+            
+            symptoms_sel = st.radio(
+                "Classic Symptoms (Frequent Urination, Excessive Thirst, Fatigue)?",
+                ["No Significant Symptoms", "Present / Noticeable Symptoms"],
+                index=def_sym,
+                horizontal=True
+            )
+            
+            cvd_sel = st.radio(
+                "History of Coronary Heart Disease / Heart Attack?",
+                ["No", "Yes"],
+                index=def_cvd,
+                horizontal=True
+            )
+            input_dict["HeartDiseaseorAttack"] = 1 if cvd_sel == "Yes" else 0
 
-            chol = st.radio("Diagnosed High Cholesterol?", ["No", "Yes"], index=default_chol, horizontal=True)
-            input_dict["HighChol"] = 1 if chol == "Yes" else 0
+            stroke_sel = st.radio(
+                "History of Stroke?",
+                ["No", "Yes"],
+                index=def_stroke,
+                horizontal=True
+            )
+            input_dict["Stroke"] = 1 if stroke_sel == "Yes" else 0
 
-            smoker = st.radio("Smoked 100+ Cigarettes in Lifetime?", ["No", "Yes"], index=default_smoke, horizontal=True)
-            input_dict["Smoker"] = 1 if smoker == "Yes" else 0
+            diff_walk = st.radio(
+                "Physical Mobility Limitation / Difficulty Walking?",
+                ["No", "Yes"],
+                index=def_walk,
+                horizontal=True
+            )
+            input_dict["DiffWalk"] = 1 if diff_walk == "Yes" else 0
 
-            act = st.radio("Physical Activity (Past 30 Days)?", ["No", "Yes"], index=1, horizontal=True)
-            input_dict["PhysActivity"] = 1 if act == "Yes" else 0
+            act_sel = st.radio(
+                "Physical Activity (≥150 min Exercise / Week)?",
+                ["Sedentary / Inactive", "Regularly Active"],
+                index=def_act,
+                horizontal=True
+            )
+            input_dict["PhysActivity"] = 1 if "Active" in act_sel else 0
 
-            fruit = st.radio("Consumes Fruit ≥1 Time/Day?", ["No", "Yes"], index=1, horizontal=True)
-            input_dict["Fruits"] = 1 if fruit == "Yes" else 0
+            smoke_sel = st.radio(
+                "Tobacco Smoking History?",
+                ["Non-Smoker", "Smoker / Prior Smoker"],
+                index=def_smoke,
+                horizontal=True
+            )
+            input_dict["Smoker"] = 1 if "Smoker" in smoke_sel else 0
 
-            veg = st.radio("Consumes Vegetables ≥1 Time/Day?", ["No", "Yes"], index=1, horizontal=True)
-            input_dict["Veggies"] = 1 if veg == "Yes" else 0
+            if (fbg_val >= 126 or hba1c_val >= 6.5 or def_gen >= 4):
+                auto_gen = 4 if fbg_val < 180 else 5
+            elif (fbg_val >= 100 or hba1c_val >= 5.7 or is_hypertensive or def_gen == 3):
+                auto_gen = 3
+            else:
+                auto_gen = max(1, min(2, def_gen))
+
+            gen_labels = {1: "1 - Excellent", 2: "2 - Very Good", 3: "3 - Good", 4: "4 - Fair", 5: "5 - Poor"}
+            gen_sel = st.selectbox(
+                "General Clinical Health Rating",
+                list(gen_labels.keys()),
+                index=auto_gen - 1,
+                format_func=lambda k: gen_labels[k],
+                help="Automatically calibrated from lab biomarkers (FBS, HbA1c, BP) or clinician adjusted."
+            )
+            input_dict["GenHlth"] = gen_sel
+            
+            input_dict["PhysHlth"] = 10 if "Present" in symptoms_sel else (2 if auto_gen >= 3 else 0)
+            input_dict["MentHlth"] = 2 if auto_gen >= 4 else 0
+
+        # Collapsible Demographic & Population baseline covariates
+        with st.expander("⚙️ Additional Demographic & Population Baseline Covariates (Optional / Auto-filled)", expanded=False):
+            st.caption("The underlying multi-tier EDL model integrates demographic covariates. These are pre-populated with clinical population medians.")
+            ec1, ec2, ec3 = st.columns(3)
+            with ec1:
+                income_labels = {
+                    1: "< $10k", 2: "$10–15k", 3: "$15–20k", 4: "$20–25k",
+                    5: "$25–35k", 6: "$35–50k", 7: "$50–75k", 8: "$75k+"
+                }
+                income_sel = st.selectbox("Income Bracket", list(income_labels.keys()), index=5, format_func=lambda k: income_labels[k])
+                input_dict["Income"] = income_sel
+            with ec2:
+                edu_labels = {1: "Never attended", 2: "Elementary", 3: "Some high school", 4: "High school graduate", 5: "Some college", 6: "College graduate"}
+                edu_sel = st.selectbox("Education Level", list(edu_labels.keys()), index=4, format_func=lambda k: edu_labels[k])
+                input_dict["Education"] = edu_sel
+            with ec3:
+                diet_good = st.checkbox("Consumes Fruits & Vegetables Daily", value=True)
+                input_dict["Fruits"] = 1 if diet_good else 0
+                input_dict["Veggies"] = 1 if diet_good else 0
+                input_dict["HvyAlcoholConsump"] = 0
+                input_dict["AnyHealthcare"] = 1
+                input_dict["NoDocbcCost"] = 0
 
     else:
         # Diabetic Patient Hospital Readmission (<30 days)
@@ -663,6 +882,30 @@ with tab_predict:
                 legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
             )
             st.plotly_chart(fig, use_container_width=True)
+
+        # Hospital Laboratory Biomarker Diagnostic Summary & Concordance
+        if dataset_key == "brfss":
+            fbg_in = st.session_state.get("patient_fbg", 100.0)
+            a1c_in = st.session_state.get("patient_hba1c", 5.5)
+            bp_in = st.session_state.get("patient_bp", "120/80 mmHg")
+            chol_in = st.session_state.get("patient_chol", 190)
+            bmi_in = input_dict.get("BMI", 25.0)
+
+            st.markdown("---")
+            st.markdown("#### 🏥 Clinical Laboratory Biomarkers & Vitals Concordance")
+            lc1, lc2, lc3, lc4 = st.columns(4)
+            with lc1:
+                st.metric("Fasting Blood Glucose", f"{fbg_in:.0f} mg/dL", 
+                          "Normal (<100)" if fbg_in < 100 else ("Pre-Diabetic" if fbg_in <= 125 else "Diabetic Range (≥126)"))
+            with lc2:
+                st.metric("HbA1c Level", f"{a1c_in:.1f}%", 
+                          "Normal (<5.7%)" if a1c_in < 5.7 else ("Pre-Diabetic" if a1c_in <= 6.4 else "Diabetic Range (≥6.5%)"))
+            with lc3:
+                st.metric("Blood Pressure", bp_in, 
+                          "Hypertensive" if input_dict.get("HighBP", 0) == 1 else "Normal (<120/80)")
+            with lc4:
+                st.metric("Body Mass Index", f"{bmi_in} kg/m²", 
+                          "Obese (≥30)" if bmi_in >= 30 else ("Overweight" if bmi_in >= 25 else "Normal"))
 
         # Clinical Recommendation Action Plan
         st.markdown("---")
