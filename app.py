@@ -351,17 +351,33 @@ def extract_lab_report_data(image_bytes, mime_type="image/jpeg", api_key=None):
         }
     }
     
-    endpoints_to_try = [
-        f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={key}",
-        f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={key}",
-        f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={key}",
-        f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={key}",
-        f"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={key}",
-        f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key={key}"
-    ]
+    # Dynamically find active models for this API key via ListModels
+    candidate_urls = []
+    for api_ver in ["v1beta", "v1"]:
+        try:
+            list_url = f"https://generativelanguage.googleapis.com/{api_ver}/models?key={key}"
+            req_list = urllib.request.Request(list_url, headers={"Content-Type": "application/json"})
+            with urllib.request.urlopen(req_list, timeout=8) as resp_list:
+                list_data = json.loads(resp_list.read().decode("utf-8"))
+                for m in list_data.get("models", []):
+                    if "generateContent" in m.get("supportedGenerationMethods", []):
+                        m_name = m.get("name", "")
+                        candidate_urls.append(
+                            f"https://generativelanguage.googleapis.com/{api_ver}/{m_name}:generateContent?key={key}"
+                        )
+        except Exception:
+            pass
+
+    if not candidate_urls:
+        candidate_urls = [
+            f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={key}",
+            f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={key}",
+            f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={key}",
+            f"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={key}"
+        ]
+
     last_error = None
-    
-    for url in endpoints_to_try:
+    for url in candidate_urls:
         try:
             req = urllib.request.Request(
                 url,
@@ -388,7 +404,6 @@ def extract_lab_report_data(image_bytes, mime_type="image/jpeg", api_key=None):
                 err_msg = str(e)
             last_error = f"HTTP {e.code}: {err_msg}"
             if e.code == 404:
-                # Try next endpoint
                 continue
             return None, last_error
         except Exception as e:
