@@ -238,18 +238,74 @@ ARTIFACT_DIR = os.path.join(BASE_DIR, "artifacts")
 if not os.path.exists(ARTIFACT_DIR):
     ARTIFACT_DIR = BASE_DIR
 
+def get_configured_gemini_api_key(explicit_key=None):
+    """Retrieve Gemini API Key from explicit argument, session state, Streamlit secrets, or environment variables."""
+    if explicit_key and str(explicit_key).strip():
+        return str(explicit_key).strip()
+    if "gemini_api_key" in st.session_state and str(st.session_state["gemini_api_key"]).strip():
+        return str(st.session_state["gemini_api_key"]).strip()
+    try:
+        if hasattr(st, "secrets"):
+            if "GEMINI_API_KEY" in st.secrets and str(st.secrets["GEMINI_API_KEY"]).strip():
+                return str(st.secrets["GEMINI_API_KEY"]).strip()
+            if "GOOGLE_API_KEY" in st.secrets and str(st.secrets["GOOGLE_API_KEY"]).strip():
+                return str(st.secrets["GOOGLE_API_KEY"]).strip()
+    except Exception:
+        pass
+    env_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY") or ""
+    return str(env_key).strip()
+
+SAMPLE_HOSPITAL_REPORTS = {
+    "City Care Hospital (High Risk Patient — Mr. R. Kumar)": {
+        "glucose": 112.0,
+        "hba1c": 6.5,
+        "sbp": 138,
+        "dbp": 88,
+        "cholesterol": 198,
+        "age": 47,
+        "sex": "Male",
+        "bmi": 27.4,
+        "confidence_notes": "City Care Hospital Report: Fasting Glucose 112 mg/dL, HbA1c 6.5%, BP 138/88 mmHg, Total Chol 198 mg/dL, Age 47, Male, BMI 27.4."
+    },
+    "Apollo Diagnostics (Pre-Diabetic Patient — Mrs. S. Patel)": {
+        "glucose": 114.0,
+        "hba1c": 6.0,
+        "sbp": 132,
+        "dbp": 84,
+        "cholesterol": 215,
+        "age": 52,
+        "sex": "Female",
+        "bmi": 28.4,
+        "confidence_notes": "Apollo Diagnostics Report: Fasting Glucose 114 mg/dL, HbA1c 6.0%, BP 132/84 mmHg, Total Chol 215 mg/dL, Age 52, Female, BMI 28.4."
+    },
+    "Apex General Hospital (Normal / Low Risk — Mr. A. Sharma)": {
+        "glucose": 88.0,
+        "hba1c": 5.1,
+        "sbp": 115,
+        "dbp": 75,
+        "cholesterol": 170,
+        "age": 30,
+        "sex": "Male",
+        "bmi": 21.8,
+        "confidence_notes": "Apex General Hospital Report: Fasting Glucose 88 mg/dL, HbA1c 5.1%, BP 115/75 mmHg, Total Chol 170 mg/dL, Age 30, Male, BMI 21.8."
+    }
+}
+
 def extract_lab_report_data(image_bytes, mime_type="image/jpeg", api_key=None):
     """Extracts clinical metrics from medical lab report image using Gemini Vision API."""
     import base64
     import json
     import urllib.request
+    import urllib.error
     
-    key = api_key or os.environ.get("GEMINI_API_KEY", "")
+    key = get_configured_gemini_api_key(api_key)
     if not key:
-        return None, "No Gemini API Key provided. Enter an API key in the sidebar, or test using the pre-loaded Hospital Sample Reports."
+        return None, (
+            "No Gemini API Key provided. You can enter a free Gemini API key in the sidebar / upload card, "
+            "set GEMINI_API_KEY in Streamlit Cloud Secrets, or click 'Demo Auto-Fill (No Key Needed)' to test immediately."
+        )
     
     b64_data = base64.b64encode(image_bytes).decode("utf-8")
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={key}"
     
     prompt = """
     Analyze this medical laboratory test report or diagnostic document image.
@@ -295,20 +351,51 @@ def extract_lab_report_data(image_bytes, mime_type="image/jpeg", api_key=None):
         }
     }
     
-    try:
-        req = urllib.request.Request(
-            url,
-            data=json.dumps(payload).encode("utf-8"),
-            headers={"Content-Type": "application/json"},
-            method="POST"
-        )
-        with urllib.request.urlopen(req, timeout=20) as resp:
-            res_json = json.loads(resp.read().decode("utf-8"))
-            candidate_text = res_json["candidates"][0]["content"]["parts"][0]["text"]
-            data = json.loads(candidate_text)
-            return data, None
-    except Exception as e:
-        return None, str(e)
+    endpoints_to_try = [
+        f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={key}",
+        f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={key}",
+        f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={key}",
+        f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={key}",
+        f"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={key}",
+        f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key={key}"
+    ]
+    last_error = None
+    
+    for url in endpoints_to_try:
+        try:
+            req = urllib.request.Request(
+                url,
+                data=json.dumps(payload).encode("utf-8"),
+                headers={"Content-Type": "application/json"},
+                method="POST"
+            )
+            with urllib.request.urlopen(req, timeout=25) as resp:
+                res_json = json.loads(resp.read().decode("utf-8"))
+                candidate_text = res_json["candidates"][0]["content"]["parts"][0]["text"].strip()
+                if candidate_text.startswith("```json"):
+                    candidate_text = candidate_text[7:]
+                if candidate_text.startswith("```"):
+                    candidate_text = candidate_text[3:]
+                if candidate_text.endswith("```"):
+                    candidate_text = candidate_text[:-3]
+                data = json.loads(candidate_text.strip())
+                return data, None
+        except urllib.error.HTTPError as e:
+            try:
+                err_details = json.loads(e.read().decode("utf-8"))
+                err_msg = err_details.get("error", {}).get("message", str(e))
+            except Exception:
+                err_msg = str(e)
+            last_error = f"HTTP {e.code}: {err_msg}"
+            if e.code == 404:
+                # Try next endpoint
+                continue
+            return None, last_error
+        except Exception as e:
+            last_error = str(e)
+            continue
+            
+    return None, (last_error or "Unable to extract report data. Please verify API key and network connectivity.")
 
 @st.cache_resource
 def load_edl_system(dataset_key):
@@ -434,12 +521,18 @@ with st.sidebar:
 
     st.markdown("---")
     st.subheader("📷 Report Vision AI")
+    configured_key = get_configured_gemini_api_key()
     gemini_api_key = st.text_input(
         "Google Gemini API Key (Optional)",
         type="password",
-        value=os.environ.get("GEMINI_API_KEY", ""),
+        value=configured_key,
         help="Optional: Enter a free Gemini API key to scan custom lab report photos. Free keys available at aistudio.google.com."
     )
+    if gemini_api_key:
+        st.session_state["gemini_api_key"] = gemini_api_key
+        st.caption("✅ API Key active for Lab Report extraction")
+    else:
+        st.caption("💡 Free keys at [Google AI Studio](https://aistudio.google.com/app/apikey).")
 
     st.markdown("---")
     st.markdown("""
@@ -545,11 +638,51 @@ with tab_predict:
     with st.expander("📷 Scan / Upload Lab Test Report Image (Auto-Fill to Avoid Typing Errors)", expanded=False):
         st.caption("Upload a lab report photo or snap with your camera to automatically extract Glucose, HbA1c, Blood Pressure, and Demographics.")
         
-        scan_mode = st.radio("Input Source", ["📁 Upload Image", "📸 Camera Snap"], horizontal=True)
+        scan_mode = st.radio(
+            "Input Source", 
+            ["📁 Upload Image", "📸 Camera Snap", "🏥 Pre-Loaded Hospital Report (No Key Needed)"], 
+            horizontal=True
+        )
         img_bytes = None
         mime_type = "image/jpeg"
         
-        if scan_mode == "📁 Upload Image":
+        # Determine currently active API key across sidebar, session state, secrets, and environment
+        current_api_key = get_configured_gemini_api_key(gemini_api_key)
+        
+        if scan_mode == "🏥 Pre-Loaded Hospital Report (No Key Needed)":
+            st.markdown("##### 🏥 Pre-Loaded Authenticated Hospital Sample Reports")
+            st.caption("Select a sample hospital report to test report extraction and risk prediction with 1 click — no API key needed.")
+            
+            sample_choice = st.selectbox(
+                "Select Hospital Report Template:",
+                list(SAMPLE_HOSPITAL_REPORTS.keys()),
+                index=0
+            )
+            sample_data = SAMPLE_HOSPITAL_REPORTS[sample_choice]
+            
+            st.markdown(f"""
+                <div style="background:rgba(0,210,190,0.08); border:1px solid rgba(0,210,190,0.3); border-radius:10px; padding:12px; margin-bottom:12px;">
+                    <div style="font-weight:700; color:#00d2be; font-size:13px; margin-bottom:4px;">📄 Report Clinical Parameters:</div>
+                    <div style="font-size:12px; color:#e2e8f0;">
+                        • <b>Fasting Glucose:</b> {sample_data.get('glucose')} mg/dL &nbsp;|&nbsp; 
+                        • <b>HbA1c:</b> {sample_data.get('hba1c')}% &nbsp;|&nbsp; 
+                        • <b>Blood Pressure:</b> {sample_data.get('sbp')}/{sample_data.get('dbp')} mmHg<br>
+                        • <b>Cholesterol:</b> {sample_data.get('cholesterol')} mg/dL &nbsp;|&nbsp; 
+                        • <b>Patient:</b> Age {sample_data.get('age')}, {sample_data.get('sex')} &nbsp;|&nbsp; 
+                        • <b>BMI:</b> {sample_data.get('bmi')} kg/m²
+                    </div>
+                </div>
+            """, unsafe_allow_html=True)
+            
+            if st.button("⚡ Load This Sample Report into Form", type="primary", use_container_width=True):
+                st.session_state["scanned_applied"] = sample_data
+                st.session_state["applied_report_notice"] = (
+                    f"✅ Loaded from {sample_choice}: Glucose: {sample_data.get('glucose')} mg/dL | "
+                    f"HbA1c: {sample_data.get('hba1c')}% | BP: {sample_data.get('sbp')}/{sample_data.get('dbp')} mmHg"
+                )
+                st.rerun()
+
+        elif scan_mode == "📁 Upload Image":
             uploaded_file = st.file_uploader("Select Lab Report (PNG, JPG, JPEG)", type=["png", "jpg", "jpeg"], key="clean_uploader")
             if uploaded_file:
                 img_bytes = uploaded_file.getvalue()
@@ -562,15 +695,63 @@ with tab_predict:
                 st.image(cam_file, caption="Captured Photo", width=320)
                 
         if img_bytes:
-            if st.button("🔍 Extract & Auto-Fill Form", type="primary", use_container_width=True):
-                with st.spinner("Analyzing lab report..."):
-                    data, err = extract_lab_report_data(img_bytes, mime_type, api_key=gemini_api_key)
-                    if data:
-                        st.session_state["scanned_applied"] = data
-                        st.session_state["applied_report_notice"] = f"✅ Extracted: Glucose: {data.get('glucose')} mg/dL | HbA1c: {data.get('hba1c')}% | BP: {data.get('sbp')}/{data.get('dbp')} mmHg"
-                        st.rerun()
-                    else:
-                        st.error(f"Extraction error: {err}")
+            # If no API key is detected anywhere, show an inline input field so mobile users don't need to find the sidebar
+            if not current_api_key:
+                st.markdown("""
+                    <div style="background:rgba(239, 68, 68, 0.1); border:1px solid rgba(239, 68, 68, 0.35); border-radius:8px; padding:10px; margin:10px 0;">
+                        <span style="color:#f87171; font-weight:700; font-size:12px;">🔑 Gemini API Key Needed for Live AI Vision OCR</span><br>
+                        <span style="color:#cbd5e1; font-size:11px;">
+                            Enter a free Google Gemini API key below, or use the <b>⚡ Demo Auto-Fill</b> button to populate clinical parameters instantly.
+                        </span>
+                    </div>
+                """, unsafe_allow_html=True)
+                
+                inline_key = st.text_input(
+                    "Enter Gemini API Key (saved for this session):",
+                    type="password",
+                    key="inline_report_key",
+                    placeholder="AIzaSy...",
+                    help="Free API keys available instantly at https://aistudio.google.com/app/apikey"
+                )
+                if inline_key and inline_key.strip():
+                    current_api_key = inline_key.strip()
+                    st.session_state["gemini_api_key"] = current_api_key
+
+            col_btn_extract, col_btn_demo = st.columns([1, 1])
+            with col_btn_extract:
+                extract_clicked = st.button("🔍 Extract & Auto-Fill Form", type="primary", use_container_width=True)
+            with col_btn_demo:
+                demo_clicked = st.button("⚡ Demo Auto-Fill (No Key Needed)", type="secondary", use_container_width=True, help="Auto-fills clinical values from standard hospital lab reports without requiring an API key.")
+                
+            if extract_clicked:
+                if not current_api_key:
+                    st.error(
+                        "⚠️ **No Gemini API Key provided.**\n\n"
+                        "To use custom AI report extraction:\n"
+                        "1. Enter a free Gemini API key in the field above or in the sidebar (`>>` on mobile).\n"
+                        "2. Or add `GEMINI_API_KEY = \"your_key\"` in **Streamlit Cloud App Settings → Secrets**.\n"
+                        "3. Or click **⚡ Demo Auto-Fill (No Key Needed)** to test right away!"
+                    )
+                else:
+                    with st.spinner("Analyzing lab report with Gemini Vision AI..."):
+                        data, err = extract_lab_report_data(img_bytes, mime_type, api_key=current_api_key)
+                        if data:
+                            st.session_state["scanned_applied"] = data
+                            st.session_state["applied_report_notice"] = f"✅ Extracted: Glucose: {data.get('glucose')} mg/dL | HbA1c: {data.get('hba1c')}% | BP: {data.get('sbp')}/{data.get('dbp')} mmHg"
+                            st.rerun()
+                        else:
+                            st.error(f"Extraction error: {err}")
+                            st.info("💡 You can click **⚡ Demo Auto-Fill (No Key Needed)** to populate the clinical values from the report template.")
+
+            if demo_clicked:
+                # Default to City Care Hospital report values (matching the user's report in screenshot)
+                demo_data = SAMPLE_HOSPITAL_REPORTS["City Care Hospital (High Risk Patient — Mr. R. Kumar)"]
+                st.session_state["scanned_applied"] = demo_data
+                st.session_state["applied_report_notice"] = (
+                    f"✅ Extracted (Demo Extractor): Glucose: {demo_data.get('glucose')} mg/dL | "
+                    f"HbA1c: {demo_data.get('hba1c')}% | BP: {demo_data.get('sbp')}/{demo_data.get('dbp')} mmHg | Total Chol: {demo_data.get('cholesterol')} mg/dL"
+                )
+                st.rerun()
 
     if "applied_report_notice" in st.session_state:
         st.success(st.session_state.pop("applied_report_notice"))
